@@ -49,89 +49,83 @@ module ietf-if-flex-e {
          (see OIF FlexE 2.0 Section 6.1).
          Note that max number of FlexE groups in a network is 63.";
 
-      container group {
-        leaf group-number {
-          mandatory true;
-          type uint32 {
-            range "1..1048574";
+      leaf group-number {
+        mandatory true;
+        type uint32 {
+          range "1..1048574";
+        }
+        description
+          "The FlexE group number";
+        reference
+          "FlexE Group Number as defined in Section 7.3.6 of FlexE
+           2.0.";
+      }
+
+      leaf more-group-config-here {
+        type string;
+      }
+
+      list bonded-phy {
+        key "name";
+        unique "phy-number";
+        description
+          "List of PHY interfaces bonded in the FlexE group.";
+
+        leaf name {
+          type if:interface-ref;
+          description
+            "The name of the underlying Physical Ethernet interface
+             bonded into this Flex-E group.";
+        }
+
+        leaf phy-number {
+          type uint8 {
+            range "1 .. 254";
           }
           description
-            "The FlexE group number";
-          reference
-            "FlexE Group Number as defined in Section 7.3.6 of FlexE
-             2.0.";
+            "PHY number of a FlexE PHY.
+
+             The maximum PHY number depends on the type of PHYs
+             bonded into the Flex-E group:
+                100GBASE-R, max is 254,
+                200GBASE-R, max is 126,
+                400GBASE-R, max is 62.";
         }
 
-        leaf more-group-config-here {
+        leaf more-bonded-phy-config-here {
           type string;
         }
-        
-        container bonded-phys {
-          list bonded-phy {
-            key "name";
-            unique "phy-number";
-            description
-              "List of PHY interfaces bonded in the FlexE group.";
-            
-            leaf name {
-              type if:interface-ref;
-              description
-                "The name of the underlying Physical Ethernet
-                 interface bonded into this Flex-E group.";
-            }
+      }
 
-            leaf phy-number {
-              type uint8 {
-                range "1 .. 254";
-              }
-              description
-                "PHY number of a FlexE PHY.
+      list client-interface {            
+        key "name";
+        unique "id";
+        description
+          "List of FlexE clients in a FlexE Group.";
 
-                 THe maximum PHY number depends on the type of PHYs
-                 bonded into the Flex-E group:
-                    100GBASE-R, max is 254,
-                    200GBASE-R, max is 126,
-                    400GBASE-R, max is 62.";
-            }
-
-            leaf more-bonded-phy-config-here {
-              type string;
-            }
+        leaf name {
+          type if:interface-ref {
+            require-instance false;
           }
+          description
+            "A client interface of the flex-e group.  The 'type' of
+             the client interface must be (or derived from)
+             'ianaift:ethernetCsmacd'.";
         }
 
-        container clients-interfaces {
-          list client-interface {            
-            key "name";
-            unique "id";
-            description
-              "List of FlexE clients in a FlexE Group.";
-
-            leaf name {
-              type if:interface-ref {
-                require-instance false;
-              }
-              description
-                "A client interface of the flex-e group.  The 'type'
-                 of the client interface must be (or derived from)
-                 'ianaift:ethernetCsmacd'.";
-            }
-
-            leaf id {
-              type uint16 {
-                range "1..65534";
-              }
-              description
-                "";
-              reference
-                "FlexE Client field as defined in FlexE 2.0 Section
-                 7.3.4.";
-            }
-
-            leaf more-flex-e-client-config-here {
-              type string;
-            }
+        leaf id {
+          type uint16 {
+            range "1..65534";
           }
+          description
+            "";
+          reference
+            "FlexE Client field as defined in FlexE 2.0 Section
+               7.3.4.";
+        }
+
+        leaf more-flex-e-client-config-here {
+          type string;
         }
       }
     }
